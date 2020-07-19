@@ -75,6 +75,7 @@ describe('메인화면에서는', () => {
       mocked(randomIntFromInterval).mockReturnValue(2);
       fireEvent.click(getByCurrentText(/game start!/i));
       fireEvent.click(getByCurrentText(/next player/i));
+      fireEvent.click(getByCurrentText('확인하기'));
 
       // then
       expect(getByCurrentText('당신은 스파이입니다.')).toBeInTheDocument();
@@ -84,6 +85,7 @@ describe('메인화면에서는', () => {
       // when
       mocked(randomIntFromInterval).mockReturnValue(2);
       fireEvent.click(getByCurrentText(/game start!/i));
+      fireEvent.click(getByCurrentText('확인하기'));
 
       // then
       expect(getByCurrentText('지정한 장소는 공항입니다')).toBeInTheDocument();
