@@ -13,10 +13,14 @@ import {
   Select,
   TextField,
   Modal,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import randomIntFromInterval from './helper';
-import { getPlace } from './places';
+import { getPlace, getPlaces } from './places';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -90,6 +94,14 @@ const useInterval = (callback: ((...args: any[]) => any) | undefined, delay: num
   }, [delay]);
 };
 
+const createNumberArray = (size: number): number[] => {
+  let arr: number[] = [];
+  for (let i = 0; i < size; i += 1) {
+    arr = [...arr, i];
+  }
+  return arr;
+};
+
 const App:React.FC = (): ReactElement => {
   const classes = useStyles();
   const [time, setTime] = useState<number>(DEFAULT_TIME_MINUTE);
@@ -103,18 +115,37 @@ const App:React.FC = (): ReactElement => {
   const [displayTime, setDisplayTime] = useState<string>('00:00');
   const [shouldEndGame, endGame] = useState<boolean>(false);
   const [shouldOpenModal, setOpenModal] = useState<boolean>(false);
+  const [answerFromSpy, setAnswerFromSpy] = useState<string>('');
+  const [answerFromPlayers, setAnswerFromPlayers] = useState<number[]>([]);
+  const [answerFromPlayer, setAnswerFromPlayer] = useState<number>(1);
+  const [shouldShowResult, setShouldShowResult] = useState<boolean>(false);
+  const [isSpyWin, setIsSpyWin] = useState<boolean>(false);
+  const [arePlayersWin, setArePlayersWin] = useState<boolean>(false);
 
   const countPlayerError = countPlayer <= 2 || countPlayer > 8;
   const shouldStartTimer = shouldStartGame && count > countPlayer;
+
   const handleTime = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTime(event.target.value as number);
   };
+
   const handleCountPlayer = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCountPlayer(event.target.value as number);
   };
+
   const handleCategory = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCategory(event.target.value as CategoryList);
   };
+
+  const handleAnswerFromPlayer = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const numString = event.target.value as string;
+    const num = parseInt(numString, 10);
+    setAnswerFromPlayer(num);
+  };
+  const handleAnswerFromSpy = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setAnswerFromSpy(event.target.value as string);
+  };
+
   const handleStartGame = () => {
     startGame(true);
     setSpyNumber(randomIntFromInterval(1, countPlayer));
@@ -142,6 +173,20 @@ const App:React.FC = (): ReactElement => {
       setDisplayTime(`${min}:${sec}`);
     }
   }, 1000);
+
+  const places: string[] = getPlaces(category);
+  const players: number[] = createNumberArray(countPlayer).map((num) => num + 1);
+
+  useEffect(() => {
+    if (!shouldShowResult) return;
+
+    const isSpyWinCurrently = answerFromSpy === place;
+    // eslint-disable-next-line max-len
+    const arePlayersWinCurrently = answerFromPlayers.filter((answer: number) => answer === spyNumber).length >= Math.ceil((countPlayer - 1) / 2);
+
+    setIsSpyWin(isSpyWinCurrently);
+    setArePlayersWin(arePlayersWinCurrently);
+  }, [shouldShowResult, answerFromSpy, place, answerFromPlayers, spyNumber, countPlayer]);
 
   return (
     <Container maxWidth="sm">
@@ -270,6 +315,14 @@ const App:React.FC = (): ReactElement => {
         <Typography variant="body2" color="textSecondary" align="center">
           {displayTime}
         </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setRemainningTime(0);
+          }}
+        >
+          Skip
+        </Button>
       </Box>
       )}
       {
@@ -278,13 +331,56 @@ const App:React.FC = (): ReactElement => {
           <Typography variant="h5" component="h2">
             {`Player ${count}`}
           </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-            {count === spyNumber ? '지정된 장소를 맞춰주세요' : '스파이를 찾아주세요.'}
-          </Typography>
+          {count === spyNumber
+            ? (
+              <Box>
+                <Typography variant="body2" color="textSecondary" align="center">지정된 장소를 맞춰주세요</Typography>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Where is target place?</FormLabel>
+                  <RadioGroup
+                    aria-label="spy-answer"
+                    name="spy-answer"
+                    value={answerFromSpy}
+                    onChange={handleAnswerFromSpy}
+                  >
+                    {places.map((placeCandidate) => (
+                      // eslint-disable-next-line max-len
+                      <FormControlLabel key={placeCandidate} value={placeCandidate} control={<Radio />} label={placeCandidate} />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+            )
+            : (
+              <Box>
+                <Typography variant="body2" color="textSecondary" align="center">스파이를 찾아주세요</Typography>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Who is spy?</FormLabel>
+                  <RadioGroup
+                    aria-label="player-answer"
+                    name="player-answer"
+                    value={answerFromPlayer}
+                    onChange={handleAnswerFromPlayer}
+                  >
+                    {players.map((playerNum) => (
+                      <FormControlLabel key={playerNum} value={playerNum} control={<Radio />} label={`Player ${playerNum}`} />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+            )}
           <Button
             variant="outlined"
             onClick={() => {
               setCount((number) => number + 1);
+              if (count !== spyNumber) {
+                setAnswerFromPlayers((oldAnswers) => [...oldAnswers, answerFromPlayer]);
+                setAnswerFromPlayer(1);
+              }
+
+              if (count === countPlayer) {
+                setShouldShowResult(true);
+              }
             }}
           >
             Next Player
@@ -292,6 +388,16 @@ const App:React.FC = (): ReactElement => {
         </Box>
         )
     }
+      {
+        shouldShowResult && (
+        <Box>
+          <Typography variant="h5" component="h2">
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {(isSpyWin && arePlayersWin) || (!isSpyWin && !arePlayersWin) ? '무승부' : isSpyWin ? '스파이 승리' : '플레이어 승리'}
+          </Typography>
+        </Box>
+        )
+      }
     </Container>
   );
 };

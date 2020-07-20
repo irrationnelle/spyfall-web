@@ -12,10 +12,15 @@ const places = {
 };
 
 const getPlace = (category: CategoryList): string => {
+  const selectedPlaces = getPlaces(category);
+  return getRandomPlace(selectedPlaces);
+};
+
+const getPlaces = (category: CategoryList): string[] => {
   const selectedPlaces = category === CategoryList.ALL
     ? [...basic, ...country, ...strange]
     : places[category];
-  return getRandomPlace(selectedPlaces);
+  return selectedPlaces;
 };
 
 // eslint-disable-next-line max-len
@@ -24,4 +29,5 @@ const getRandomPlace = (targetPlaces: string[]) => targetPlaces[randomIntFromInt
 export {
   places,
   getPlace,
+  getPlaces,
 };
