@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitForElement } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
 
 import App from './App';
@@ -11,16 +11,18 @@ describe('메인화면에서는', () => {
   describe('설정 관련 화면으로', () => {
     let getByCurrentText: any;
     let getByCurrentLabelText: any;
+    let getByCurrentTestId: any;
     let queryByCurrentLabelText: any;
     let queryByCurrentTestId: any;
     let inputCountPlayerElement: HTMLElement;
 
     beforeEach(() => {
       const {
-        getByText, getByLabelText, queryByLabelText, queryByTestId,
+        getByText, getByLabelText, getByTestId, queryByLabelText, queryByTestId,
       } = render(<App />);
       getByCurrentText = getByText;
       getByCurrentLabelText = getByLabelText;
+      getByCurrentTestId = getByTestId;
       queryByCurrentLabelText = queryByLabelText;
       queryByCurrentTestId = queryByTestId;
       inputCountPlayerElement = getByLabelText('Player');
@@ -100,6 +102,19 @@ describe('메인화면에서는', () => {
 
       // then
       expect(getByCurrentText('스파이를 찾아내도록 합니다.')).toBeInTheDocument();
+    });
+
+    it('플레이어들이 확인을 마친 후 skip 버튼을 누르면 답을 말하는 화면이 나타난다.', async () => {
+      fireEvent.click(getByCurrentText(/game start!/i));
+      for (let i = 0; i < 4; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      await waitForElement(() => {
+        fireEvent.click(getByCurrentText(/skip/i));
+      }, { timeout: 5000 });
+
+      // then
+      expect(getByCurrentText('스파이를 찾아주세요')).toBeInTheDocument();
     });
   });
 });
