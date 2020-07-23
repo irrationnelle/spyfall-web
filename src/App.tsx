@@ -319,6 +319,8 @@ const App:React.FC = (): ReactElement => {
           variant="outlined"
           onClick={() => {
             setRemainningTime(0);
+            endGame(true);
+            setCount(1);
           }}
         >
           Skip
