@@ -109,9 +109,7 @@ describe('메인화면에서는', () => {
       for (let i = 0; i < 4; i += 1) {
         fireEvent.click(getByCurrentText(/next player/i));
       }
-      await waitForElement(() => {
-        fireEvent.click(getByCurrentText(/skip/i));
-      }, { timeout: 5000 });
+      fireEvent.click(getByCurrentText(/skip/i));
 
       // then
       expect(getByCurrentText('스파이를 찾아주세요')).toBeInTheDocument();
