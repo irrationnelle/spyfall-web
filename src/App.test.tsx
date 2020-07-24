@@ -149,5 +149,113 @@ describe('메인화면에서는', () => {
       // then
       expect(getByCurrentText('스파이를 찾아주세요')).toBeInTheDocument();
     });
+
+    it('스파이도 답을 맞추고 플레이어의 반 이상이 답을 맞추면 무승부가 된다.', () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
+      fireEvent.click(getByCurrentText(/game start!/i));
+      for (let i = 0; i < 4; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText('공항'));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+      // then
+      expect(getByCurrentText('무승부')).toBeInTheDocument();
+    });
+
+    it('스파이는 답을 맞추고 플레이어의 반 이상이 답을 못 맞추면 스파이 승리가 된다.', () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
+      fireEvent.click(getByCurrentText(/game start!/i));
+      for (let i = 0; i < 4; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText('공항'));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+      // then
+      expect(getByCurrentText('무승부')).toBeInTheDocument();
+    });
+
+    it('스파이는 답을 못 맞추고 플레이어의 반 이상이 답을 맞추면 플레이어 승리가 된다.', () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
+      fireEvent.click(getByCurrentText(/game start!/i));
+      for (let i = 0; i < 4; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText('병원'));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+      // then
+      expect(getByCurrentText('무승부')).toBeInTheDocument();
+    });
+
+    it('스파이도 답을 못 맞추고 플레이어의 반 이상이 답을 못 맞추면 무승부가 된다.', () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
+      fireEvent.click(getByCurrentText(/game start!/i));
+      for (let i = 0; i < 4; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText('병원'));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+      // then
+      expect(getByCurrentText('무승부')).toBeInTheDocument();
+    });
   });
 });
