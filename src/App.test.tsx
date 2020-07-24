@@ -116,6 +116,7 @@ describe('메인화면에서는', () => {
     });
 
     it('답을 말하는 화면에서 플레이어는 스파이를 선택할 수 있다.', async () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
       fireEvent.click(getByCurrentText(/game start!/i));
       for (let i = 0; i < 4; i += 1) {
         fireEvent.click(getByCurrentText(/next player/i));
@@ -128,6 +129,25 @@ describe('메인화면에서는', () => {
 
       // then
       expect(getByCurrentText('지정된 장소를 맞춰주세요')).toBeInTheDocument();
+    });
+
+    it('답을 말하는 화면에서 스파이는 장소를 선택할 수 있다.', () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
+      fireEvent.click(getByCurrentText(/game start!/i));
+      for (let i = 0; i < 4; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText('공항'));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+      // then
+      expect(getByCurrentText('스파이를 찾아주세요')).toBeInTheDocument();
     });
   });
 });
