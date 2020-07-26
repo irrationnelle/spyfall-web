@@ -262,5 +262,41 @@ describe('메인화면에서는', () => {
       // then
       expect(getByCurrentText('무승부')).toBeInTheDocument();
     });
+
+    it('플레이어 숫자를 5명으로 추가한 뒤 무승부로 답안을 선택하면 무승부 화면이 나온다.', () => {
+      mocked(randomIntFromInterval).mockReturnValue(2);
+
+      const playerInput = getByCurrentTestId('player-input');
+      fireEvent.change(playerInput, { target: { value: 5 } });
+
+      fireEvent.click(getByCurrentText(/game start!/i));
+
+      for (let i = 0; i < 5; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+
+      fireEvent.click(getByCurrentText(/player 2/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText('병원'));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+
+      fireEvent.click(getByCurrentText(/player 1/i));
+
+      fireEvent.click(getByCurrentText(/next player/i));
+      // then
+      expect(getByCurrentText('무승부')).toBeInTheDocument();
+    });
   });
 });
