@@ -1,7 +1,7 @@
 import React, {
   ReactElement, useState, useEffect, useRef,
 } from 'react';
-import { RecoilRoot } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import {
   Box,
   Button,
@@ -17,6 +17,14 @@ import {
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { getPlaces } from './places';
 import InitialSetting from './InitialSetting';
+import {
+  categorySelector,
+  countPlayerSelector,
+  placeSelector,
+  shouldStartGameSelector,
+  spyNumberSelector,
+  timeSelector,
+} from './selectors/InitialSetting';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -38,8 +46,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-const DEFAULT_COUNT_PLAYER = 4;
-const DEFAULT_TIME_MINUTE = 5;
 export enum CategoryList {
   ALL = 'all',
   BASIC = 'basic',
@@ -81,13 +87,13 @@ const createNumberArray = (size: number): number[] => {
 
 const App:React.FC = (): ReactElement => {
   const classes = useStyles();
-  const [time, setTime] = useState<number>(DEFAULT_TIME_MINUTE);
-  const [countPlayer, setCountPlayer] = useState<number>(DEFAULT_COUNT_PLAYER);
-  const [category, setCategory] = useState<CategoryList>(CategoryList.BASIC);
-  const [shouldStartGame, startGame] = useState<boolean>(false);
-  const [spyNumber, setSpyNumber] = useState<number>(0);
+  const shouldStartGame = useRecoilValue(shouldStartGameSelector);
+  const spyNumber = useRecoilValue(spyNumberSelector);
+  const place = useRecoilValue(placeSelector);
+  const time = useRecoilValue<number>(timeSelector);
+  const countPlayer = useRecoilValue<number>(countPlayerSelector);
+  const category = useRecoilValue<CategoryList>(categorySelector);
   const [count, setCount] = useState<number>(1);
-  const [place, setPlace] = useState<string>('허공');
   const [remainningTime, setRemainningTime] = useState<number>(time * 60);
   const [displayTime, setDisplayTime] = useState<string>('00:00');
   const [shouldEndGame, endGame] = useState<boolean>(false);
@@ -138,18 +144,18 @@ const App:React.FC = (): ReactElement => {
     if (!shouldShowResult) return;
 
     const isSpyWinCurrently = answerFromSpy === place;
-    // eslint-disable-next-line max-len
-    const arePlayersWinCurrently = answerFromPlayers.filter((answer: number) => answer === spyNumber).length >= Math.ceil((countPlayer - 1) / 2);
+    const arePlayersWinCurrently = answerFromPlayers.filter(
+      (answer: number) => answer === spyNumber,
+    ).length >= Math.ceil((countPlayer - 1) / 2);
 
     setIsSpyWin(isSpyWinCurrently);
     setArePlayersWin(arePlayersWinCurrently);
   }, [shouldShowResult, answerFromSpy, place, answerFromPlayers, spyNumber, countPlayer]);
 
   return (
-    <RecoilRoot>
-      <Container maxWidth="sm">
-        {!shouldStartGame && <InitialSetting />}
-        {shouldStartGame && count <= countPlayer && !shouldEndGame
+    <Container maxWidth="sm">
+      {!shouldStartGame && <InitialSetting />}
+      {shouldStartGame && count <= countPlayer && !shouldEndGame
           && (
           <Box
             style={{
@@ -200,39 +206,39 @@ const App:React.FC = (): ReactElement => {
             </Button>
           </Box>
           )}
-        {shouldStartTimer && !shouldEndGame && (
-          <Box>
-            <Typography variant="h5" component="h2">
-              이제부터 지정된 장소에 대해 이야기하면서
-            </Typography>
-            <Typography variant="h5" component="h2">
-              스파이를 찾아내도록 합니다.
-            </Typography>
-            <Typography variant="body2" color="textSecondary" align="center">
-              제한된 시간은
-              {' '}
-              {time}
-              {' '}
-              분
-              {' '}
-              입니다.
-            </Typography>
-            <Typography variant="body2" color="textSecondary" align="center">
-              {displayTime}
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setRemainningTime(0);
-                endGame(true);
-                setCount(1);
-              }}
-            >
-              Skip
-            </Button>
-          </Box>
-        )}
-        {
+      {shouldStartTimer && !shouldEndGame && (
+      <Box>
+        <Typography variant="h5" component="h2">
+          이제부터 지정된 장소에 대해 이야기하면서
+        </Typography>
+        <Typography variant="h5" component="h2">
+          스파이를 찾아내도록 합니다.
+        </Typography>
+        <Typography variant="body2" color="textSecondary" align="center">
+          제한된 시간은
+          {' '}
+          {time}
+          {' '}
+          분
+          {' '}
+          입니다.
+        </Typography>
+        <Typography variant="body2" color="textSecondary" align="center">
+          {displayTime}
+        </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setRemainningTime(0);
+            endGame(true);
+            setCount(1);
+          }}
+        >
+          Skip
+        </Button>
+      </Box>
+      )}
+      {
         shouldEndGame && count <= countPlayer && (
         <Box>
           <Typography variant="h5" component="h2">
@@ -251,8 +257,12 @@ const App:React.FC = (): ReactElement => {
                     onChange={handleAnswerFromSpy}
                   >
                     {places.map((placeCandidate) => (
-                      // eslint-disable-next-line max-len
-                      <FormControlLabel key={placeCandidate} value={placeCandidate} control={<Radio />} label={placeCandidate} />
+                      <FormControlLabel
+                        key={placeCandidate}
+                        value={placeCandidate}
+                        control={<Radio />}
+                        label={placeCandidate}
+                      />
                     ))}
                   </RadioGroup>
                 </FormControl>
@@ -295,7 +305,7 @@ const App:React.FC = (): ReactElement => {
         </Box>
         )
     }
-        {
+      {
         shouldShowResult && (
         <Box>
           <Typography variant="h5" component="h2">
@@ -305,8 +315,7 @@ const App:React.FC = (): ReactElement => {
         </Box>
         )
       }
-      </Container>
-    </RecoilRoot>
+    </Container>
   );
 };
 

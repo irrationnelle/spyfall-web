@@ -1,11 +1,20 @@
 import {
   Box, Button, FormControl, InputLabel, Link, MenuItem, Select, TextField, Typography,
 } from '@material-ui/core';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { CategoryList } from './App';
 import randomIntFromInterval from './helper';
 import { getPlace } from './places';
+import {
+  categorySelector,
+  countPlayerSelector,
+  placeSelector,
+  shouldStartGameSelector,
+  spyNumberSelector,
+  timeSelector,
+} from './selectors/InitialSetting';
 
 const Copyright: React.FC = (): ReactElement => (
   <Typography variant="body2" color="textSecondary" align="center">
@@ -29,17 +38,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-const DEFAULT_TIME_MINUTE = 5;
-const DEFAULT_COUNT_PLAYER = 4;
-
 const InitialSetting = () => {
   const classes = useStyles();
-  const [countPlayer, setCountPlayer] = useState<number>(DEFAULT_COUNT_PLAYER);
-  const [time, setTime] = useState<number>(DEFAULT_TIME_MINUTE);
-  const [category, setCategory] = useState<CategoryList>(CategoryList.BASIC);
-  const [shouldStartGame, startGame] = useState<boolean>(false);
-  const [spyNumber, setSpyNumber] = useState<number>(0);
-  const [place, setPlace] = useState<string>('허공');
+  const [countPlayer, setCountPlayer] = useRecoilState<number>(countPlayerSelector);
+  const [time, setTime] = useRecoilState<number>(timeSelector);
+  const [category, setCategory] = useRecoilState<CategoryList>(categorySelector);
+  const startGame = useSetRecoilState(shouldStartGameSelector);
+  const setSpyNumber = useSetRecoilState(spyNumberSelector);
+  const setPlace = useSetRecoilState(placeSelector);
 
   const countPlayerError = countPlayer <= 2 || countPlayer > 8;
   const handleTime = (event: React.ChangeEvent<{ value: unknown }>) => {

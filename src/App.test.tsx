@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, fireEvent, waitForElement } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
+import { RecoilRoot } from 'recoil';
 
 import App from './App';
 import randomIntFromInterval from './helper';
@@ -19,7 +20,11 @@ describe('메인화면에서는', () => {
     beforeEach(() => {
       const {
         getByText, getByLabelText, getByTestId, queryByLabelText, queryByTestId,
-      } = render(<App />);
+      } = render(
+        <RecoilRoot>
+          <App />
+        </RecoilRoot>,
+      );
       getByCurrentText = getByText;
       getByCurrentLabelText = getByLabelText;
       getByCurrentTestId = getByTestId;
