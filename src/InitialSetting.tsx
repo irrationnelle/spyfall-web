@@ -53,7 +53,8 @@ const InitialSetting = () => {
   };
 
   const handleCountPlayer = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCountPlayer(event.target.value as number);
+    const currentCountPlayer = parseInt(event.target.value as string, 10);
+    setCountPlayer(currentCountPlayer);
   };
 
   const handleCategory = (event: React.ChangeEvent<{ value: unknown }>) => {
