@@ -91,7 +91,7 @@ const InitialSetting = () => {
       </FormControl>
       <form noValidate autoComplete="off" className={classes.form}>
         <TextField
-          data-testid="player-input"
+          inputProps={{ 'data-testid': 'player-input' }}
           error={countPlayerError}
           id="player-input"
           label={countPlayerError ? 'Error' : 'Player'}
