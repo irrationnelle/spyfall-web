@@ -16,6 +16,7 @@ describe('메인화면에서는', () => {
     let queryByCurrentLabelText: any;
     let queryByCurrentTestId: any;
     let inputCountPlayerElement: HTMLElement;
+    const FOUR_PLAYERS = 4;
 
     beforeEach(() => {
       const {
@@ -32,6 +33,34 @@ describe('메인화면에서는', () => {
       queryByCurrentTestId = queryByTestId;
       inputCountPlayerElement = getByLabelText('Player');
     });
+
+    const passStageToIdentifyForCountPlayer = (countPlayer: number) => {
+      for (let i = 0; i < countPlayer; i += 1) {
+        fireEvent.click(getByCurrentText(/next player/i));
+      }
+      fireEvent.click(getByCurrentText(/skip/i));
+    };
+
+    const moveNextAfterFindSpy = (playerNum: number) => {
+      fireEvent.click(getByCurrentText(`Player ${playerNum}`));
+      fireEvent.click(getByCurrentText(/next player/i));
+    };
+
+    const moveNextAfterFindPlace = (placeName: string) => {
+      fireEvent.click(getByCurrentText(placeName));
+      fireEvent.click(getByCurrentText(/next player/i));
+    };
+
+    const expectDrawGame = (countPlayer: number) => {
+      moveNextAfterFindSpy(2);
+      moveNextAfterFindPlace('병원');
+
+      for (let i = 0; i < countPlayer - 2; i += 1) {
+        moveNextAfterFindSpy(1);
+      }
+
+      expect(getByCurrentText('무승부')).toBeInTheDocument();
+    };
 
     it('시간 입력이 나온다.', () => {
       const linkElement = getByCurrentText('Time');
@@ -237,66 +266,30 @@ describe('메인화면에서는', () => {
     });
 
     it('스파이도 답을 못 맞추고 플레이어의 반 이상이 답을 못 맞추면 무승부가 된다.', () => {
+      // given
       mocked(randomIntFromInterval).mockReturnValue(2);
       fireEvent.click(getByCurrentText(/game start!/i));
-      for (let i = 0; i < 4; i += 1) {
-        fireEvent.click(getByCurrentText(/next player/i));
-      }
-      fireEvent.click(getByCurrentText(/skip/i));
+      passStageToIdentifyForCountPlayer(FOUR_PLAYERS);
 
-      fireEvent.click(getByCurrentText(/player 2/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText('병원'));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText(/player 1/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText(/player 1/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-      // then
-      expect(getByCurrentText('무승부')).toBeInTheDocument();
+      // when, then
+      expectDrawGame(FOUR_PLAYERS);
     });
 
     it('플레이어 숫자를 5명으로 추가한 뒤 무승부로 답안을 선택하면 무승부 화면이 나온다.', () => {
+      // given
       mocked(randomIntFromInterval).mockReturnValue(2);
 
-      const playerInput = getByCurrentTestId('player-input');
-      fireEvent.change(playerInput, { target: { value: 5 } });
+      // when
+      const FIVE_PLAYERS = 5;
 
+      const playerInput = getByCurrentTestId('player-input');
+      fireEvent.change(playerInput, { target: { value: FIVE_PLAYERS } });
       fireEvent.click(getByCurrentText(/game start!/i));
 
-      for (let i = 0; i < 5; i += 1) {
-        fireEvent.click(getByCurrentText(/next player/i));
-      }
-      fireEvent.click(getByCurrentText(/skip/i));
+      passStageToIdentifyForCountPlayer(FIVE_PLAYERS);
 
-      fireEvent.click(getByCurrentText(/player 2/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText('병원'));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText(/player 1/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText(/player 1/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
-
-      fireEvent.click(getByCurrentText(/player 1/i));
-
-      fireEvent.click(getByCurrentText(/next player/i));
       // then
-      expect(getByCurrentText('무승부')).toBeInTheDocument();
+      expectDrawGame(FIVE_PLAYERS);
     });
   });
 });
