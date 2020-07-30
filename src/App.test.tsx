@@ -62,50 +62,6 @@ describe('메인화면에서는', () => {
       expect(getByCurrentText('무승부')).toBeInTheDocument();
     };
 
-    it('시간 입력이 나온다.', () => {
-      const linkElement = getByCurrentText('Time');
-      expect(linkElement).toBeInTheDocument();
-    });
-
-    it('플레이어 숫자 입력이 나온다.', () => {
-      const linkElement = getByCurrentText('Player');
-      expect(linkElement).toBeInTheDocument();
-    });
-
-    it('플레이어 숫자가 2명 이하이면 에러 메시지가 나온다.', () => {
-      // when
-      fireEvent.change(inputCountPlayerElement, { target: { value: 2 } });
-
-      // then
-      const errInputCountPlayerElement = queryByCurrentLabelText('Player');
-      expect(errInputCountPlayerElement).not.toBeInTheDocument();
-      const currentInputCountPlayerElement = getByCurrentLabelText('Error');
-      expect(currentInputCountPlayerElement).toBeInTheDocument();
-    });
-
-    it('플레이어 숫자가 9명 이상이면 에러 메시지가 나온다.', () => {
-      // when
-      fireEvent.change(inputCountPlayerElement, { target: { value: 9 } });
-
-      // then
-      const errInputCountPlayerElement = queryByCurrentLabelText('Player');
-      expect(errInputCountPlayerElement).not.toBeInTheDocument();
-      const currentInputCountPlayerElement = getByCurrentLabelText('Error');
-      expect(currentInputCountPlayerElement).toBeInTheDocument();
-    });
-
-    it('게임을 시작하면 설정 화면에서 벗어난다.', () => {
-      // given
-      const gameSettingBox = queryByCurrentTestId('game-setting-box');
-      expect(gameSettingBox).toBeInTheDocument();
-
-      // when
-      fireEvent.click(getByCurrentText(/game start!/i));
-
-      // then
-      expect(gameSettingBox).not.toBeInTheDocument();
-    });
-
     it('게임을 시작하면 스파이 플레이어 번호를 지정한다.', () => {
       // when
       mocked(randomIntFromInterval).mockReturnValue(2);
