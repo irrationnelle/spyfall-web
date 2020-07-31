@@ -4,8 +4,6 @@ import { RecoilRoot } from 'recoil';
 
 import App from '../App';
 
-jest.mock('../helper');
-
 describe('설정 관련 화면(InitialSetting)에서는', () => {
   let getByCurrentText: any;
   let getByCurrentLabelText: any;
@@ -29,34 +27,6 @@ describe('설정 관련 화면(InitialSetting)에서는', () => {
     queryByCurrentTestId = queryByTestId;
     inputCountPlayerElement = getByLabelText('Player');
   });
-
-  const passStageToIdentifyForCountPlayer = (countPlayer: number) => {
-    for (let i = 0; i < countPlayer; i += 1) {
-      fireEvent.click(getByCurrentText(/next player/i));
-    }
-    fireEvent.click(getByCurrentText(/skip/i));
-  };
-
-  const moveNextAfterFindSpy = (playerNum: number) => {
-    fireEvent.click(getByCurrentLabelText(`Player ${playerNum}`));
-    fireEvent.click(getByCurrentText(/next player/i));
-  };
-
-  const moveNextAfterFindPlace = (placeName: string) => {
-    fireEvent.click(getByCurrentLabelText(placeName));
-    fireEvent.click(getByCurrentText(/next player/i));
-  };
-
-  const expectDrawGame = (countPlayer: number) => {
-    moveNextAfterFindSpy(2);
-    moveNextAfterFindPlace('병원');
-
-    for (let i = 0; i < countPlayer - 2; i += 1) {
-      moveNextAfterFindSpy(1);
-    }
-
-    expect(getByCurrentText('무승부')).toBeInTheDocument();
-  };
 
   it('시간 입력이 나온다.', () => {
     const linkElement = getByCurrentText('Time');
