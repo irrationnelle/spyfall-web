@@ -1,4 +1,6 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, {
+  ReactElement, useState, useEffect, useMemo,
+} from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   Box,
@@ -61,6 +63,11 @@ const App:React.FC = (): ReactElement => {
     setAnswerFromSpy(event.target.value as string);
   };
 
+  const roleMessage = useMemo(
+    () => (count === spyNumber ? '당신은 스파이입니다.' : `지정한 장소는 ${place}입니다`),
+    [count, spyNumber, place],
+  );
+
   useInterval(() => {
     if (remainningTime === 0 && !shouldEndGame) {
       endGame(true);
@@ -106,7 +113,7 @@ const App:React.FC = (): ReactElement => {
           >
             <IdentifyRole
               playerName={`Player ${count}`}
-              roleMessage={count === spyNumber ? '당신은 스파이입니다.' : `지정한 장소는 ${place}입니다`}
+              roleMessage={roleMessage}
             />
             <Button
               variant="outlined"
