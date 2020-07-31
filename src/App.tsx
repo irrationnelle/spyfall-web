@@ -1,30 +1,26 @@
 import React, {
   ReactElement, useState, useEffect, useMemo,
 } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Box,
   Button,
   Container,
   Typography,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
 } from '@material-ui/core';
-import { getPlaces } from './places';
+
 import InitialSetting from './InitialSetting';
+import Answer from './Answer';
+import IdentifyRole from './components/IdentifyRole';
 import {
-  categorySelector,
   countPlayerSelector,
   placeSelector,
   shouldStartGameSelector,
   spyNumberSelector,
   timeSelector,
 } from './selectors/InitialSetting';
-import { createSequentialNumberArray, useInterval } from './helper';
-import IdentifyRole from './components/IdentifyRole';
+import { answerFromPlayerSelector, answerFromSpySelector } from './selectors/Answer';
+import { useInterval } from './helper';
 
 export enum CategoryList {
   ALL = 'all',
@@ -39,29 +35,22 @@ const App:React.FC = (): ReactElement => {
   const place = useRecoilValue(placeSelector);
   const time = useRecoilValue<number>(timeSelector);
   const countPlayer = useRecoilValue<number>(countPlayerSelector);
-  const category = useRecoilValue<CategoryList>(categorySelector);
 
   const [count, setCount] = useState<number>(1);
   const [remainningTime, setRemainningTime] = useState<number>(time * 60);
   const [displayTime, setDisplayTime] = useState<string>('00:00');
   const [shouldEndGame, endGame] = useState<boolean>(false);
-  const [answerFromSpy, setAnswerFromSpy] = useState<string>('');
+
+  const answerFromSpy = useRecoilValue(answerFromSpySelector);
   const [answerFromPlayers, setAnswerFromPlayers] = useState<number[]>([]);
-  const [answerFromPlayer, setAnswerFromPlayer] = useState<number>(1);
+  const [answerFromPlayer, setAnswerFromPlayer] = useRecoilState<number>(answerFromPlayerSelector);
+
   const [shouldShowResult, setShouldShowResult] = useState<boolean>(false);
+
   const [isSpyWin, setIsSpyWin] = useState<boolean>(false);
   const [arePlayersWin, setArePlayersWin] = useState<boolean>(false);
 
   const shouldStartTimer = shouldStartGame && count > countPlayer;
-
-  const handleAnswerFromPlayer = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const numString = event.target.value as string;
-    const num = parseInt(numString, 10);
-    setAnswerFromPlayer(num);
-  };
-  const handleAnswerFromSpy = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAnswerFromSpy(event.target.value as string);
-  };
 
   const roleMessage = useMemo(
     () => (count === spyNumber ? '당신은 스파이입니다.' : `지정한 장소는 ${place}입니다`),
@@ -77,9 +66,6 @@ const App:React.FC = (): ReactElement => {
     if (isSpyWin) return '스파이 승리';
     return '플레이어 승리';
   };
-
-  const places: string[] = getPlaces(category);
-  const players: number[] = createSequentialNumberArray(countPlayer).map((num) => num + 1);
 
   useInterval(() => {
     if (remainningTime === 0 && !shouldEndGame) {
@@ -180,48 +166,7 @@ const App:React.FC = (): ReactElement => {
           <Typography variant="h5" component="h2">
             {`Player ${count}`}
           </Typography>
-          {count === spyNumber
-            ? (
-              <Box>
-                <Typography variant="body2" color="textSecondary" align="center">지정된 장소를 맞춰주세요</Typography>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Where is target place?</FormLabel>
-                  <RadioGroup
-                    aria-label="spy-answer"
-                    name="spy-answer"
-                    value={answerFromSpy}
-                    onChange={handleAnswerFromSpy}
-                  >
-                    {places.map((placeCandidate) => (
-                      <FormControlLabel
-                        key={placeCandidate}
-                        value={placeCandidate}
-                        control={<Radio />}
-                        label={placeCandidate}
-                      />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              </Box>
-            )
-            : (
-              <Box>
-                <Typography variant="body2" color="textSecondary" align="center">스파이를 찾아주세요</Typography>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Who is spy?</FormLabel>
-                  <RadioGroup
-                    aria-label="player-answer"
-                    name="player-answer"
-                    value={answerFromPlayer}
-                    onChange={handleAnswerFromPlayer}
-                  >
-                    {players.map((playerNum) => (
-                      <FormControlLabel key={playerNum} value={playerNum} control={<Radio />} label={`Player ${playerNum}`} />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              </Box>
-            )}
+          <Answer isSpy={count === spyNumber} />
           <Button
             variant="outlined"
             onClick={() => {
