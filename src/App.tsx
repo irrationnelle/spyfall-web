@@ -68,6 +68,19 @@ const App:React.FC = (): ReactElement => {
     [count, spyNumber, place],
   );
 
+  const resultMessage = () => {
+    const areBothWin = isSpyWin && arePlayersWin;
+    const areBothLost = !isSpyWin && !arePlayersWin;
+    const isDraw = areBothWin || areBothLost;
+
+    if (isDraw) return '무승부';
+    if (isSpyWin) return '스파이 승리';
+    return '플레이어 승리';
+  };
+
+  const places: string[] = getPlaces(category);
+  const players: number[] = createSequentialNumberArray(countPlayer).map((num) => num + 1);
+
   useInterval(() => {
     if (remainningTime === 0 && !shouldEndGame) {
       endGame(true);
@@ -77,24 +90,30 @@ const App:React.FC = (): ReactElement => {
 
     if (shouldStartTimer) {
       setRemainningTime(remainningTime - 1);
-      // eslint-disable-next-line max-len
-      const min = remainningTime % 60 === 0 ? Math.floor(remainningTime / 60) - 1 : Math.floor(remainningTime / 60);
-      // eslint-disable-next-line no-nested-ternary
-      const sec = remainningTime % 60 === 0 ? '59' : remainningTime % 60 - 1 < 10 ? `0${remainningTime % 60 - 1}` : `${remainningTime % 60 - 1}`;
+      const currentMinute = Math.floor(remainningTime / 60);
+      const isOneMinutePassed = remainningTime % 60 === 0;
+      const min = isOneMinutePassed ? currentMinute - 1 : currentMinute;
+
+      const diplaySecondsWithConditionalZero = (currentRemainningTime: number): string => {
+        const isSmallerThanTenSeconds = currentRemainningTime % 60 - 1 < 10;
+        return isSmallerThanTenSeconds ? `0${currentRemainningTime % 60 - 1}` : `${currentRemainningTime % 60 - 1}`;
+      };
+
+      const sec = isOneMinutePassed ? '59' : diplaySecondsWithConditionalZero(remainningTime);
+
       setDisplayTime(`${min}:${sec}`);
     }
   }, 1000);
-
-  const places: string[] = getPlaces(category);
-  const players: number[] = createSequentialNumberArray(countPlayer).map((num) => num + 1);
 
   useEffect(() => {
     if (!shouldShowResult) return;
 
     const isSpyWinCurrently = answerFromSpy === place;
-    const arePlayersWinCurrently = answerFromPlayers.filter(
+    const correctAnswerCount = answerFromPlayers.filter(
       (answer: number) => answer === spyNumber,
-    ).length >= Math.ceil((countPlayer - 1) / 2);
+    ).length;
+    const necessaryCountToWin = Math.ceil((countPlayer - 1) / 2);
+    const arePlayersWinCurrently = correctAnswerCount >= necessaryCountToWin;
 
     setIsSpyWin(isSpyWinCurrently);
     setArePlayersWin(arePlayersWinCurrently);
@@ -138,13 +157,7 @@ const App:React.FC = (): ReactElement => {
           스파이를 찾아내도록 합니다.
         </Typography>
         <Typography variant="body2" color="textSecondary" align="center">
-          제한된 시간은
-          {' '}
-          {time}
-          {' '}
-          분
-          {' '}
-          입니다.
+          {`제한된 시간은 ${time} 분 입니다.`}
         </Typography>
         <Typography variant="body2" color="textSecondary" align="center">
           {displayTime}
@@ -232,8 +245,7 @@ const App:React.FC = (): ReactElement => {
         shouldShowResult && (
         <Box>
           <Typography variant="h5" component="h2">
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {(isSpyWin && arePlayersWin) || (!isSpyWin && !arePlayersWin) ? '무승부' : isSpyWin ? '스파이 승리' : '플레이어 승리'}
+            {resultMessage()}
           </Typography>
         </Box>
         )
