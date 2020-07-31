@@ -3,10 +3,10 @@ import { render, fireEvent } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
 import { RecoilRoot } from 'recoil';
 
-import App from './App';
-import randomIntFromInterval from './helper/randomIntFromInterval';
+import App from '../App';
+import randomIntFromInterval from '../helper/randomIntFromInterval';
 
-jest.mock('./helper/randomIntFromInterval');
+jest.mock('../helper/randomIntFromInterval');
 
 describe('메인화면에서는', () => {
   describe('설정 관련 화면으로', () => {
