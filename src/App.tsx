@@ -6,13 +6,11 @@ import {
   Container,
   Typography,
   FormControl,
-  Modal,
   FormLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
 } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { getPlaces } from './places';
 import InitialSetting from './InitialSetting';
 import {
@@ -24,26 +22,7 @@ import {
   timeSelector,
 } from './selectors/InitialSetting';
 import { createSequentialNumberArray, useInterval } from './helper';
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-    },
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  paper: {
-    position: 'relative',
-    margin: 'auto',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-}));
+import IdentifyRole from './components/IdentifyRole';
 
 export enum CategoryList {
   ALL = 'all',
@@ -53,8 +32,6 @@ export enum CategoryList {
 }
 
 const App:React.FC = (): ReactElement => {
-  const classes = useStyles();
-
   const shouldStartGame = useRecoilValue(shouldStartGameSelector);
   const spyNumber = useRecoilValue(spyNumberSelector);
   const place = useRecoilValue(placeSelector);
@@ -66,7 +43,6 @@ const App:React.FC = (): ReactElement => {
   const [remainningTime, setRemainningTime] = useState<number>(time * 60);
   const [displayTime, setDisplayTime] = useState<string>('00:00');
   const [shouldEndGame, endGame] = useState<boolean>(false);
-  const [shouldOpenModal, setOpenModal] = useState<boolean>(false);
   const [answerFromSpy, setAnswerFromSpy] = useState<string>('');
   const [answerFromPlayers, setAnswerFromPlayers] = useState<number[]>([]);
   const [answerFromPlayer, setAnswerFromPlayer] = useState<number>(1);
@@ -83,10 +59,6 @@ const App:React.FC = (): ReactElement => {
   };
   const handleAnswerFromSpy = (event: React.ChangeEvent<{ value: unknown }>) => {
     setAnswerFromSpy(event.target.value as string);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
   };
 
   useInterval(() => {
@@ -132,35 +104,10 @@ const App:React.FC = (): ReactElement => {
               flexDirection: 'column',
             }}
           >
-            <Typography variant="h5" component="h2">
-              {`Player ${count}`}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                setOpenModal(true);
-              }}
-            >
-              확인하기
-            </Button>
-            <Modal
-              open={shouldOpenModal}
-              onClose={handleCloseModal}
-              aria-labelledby="simple-modal-title"
-              aria-describedby="simple-modal-description"
-            >
-              <div className={classes.paper}>
-                <h2 id="simple-modal-title">{count === spyNumber ? '당신은 스파이입니다.' : `지정한 장소는 ${place}입니다`}</h2>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleCloseModal}
-                >
-                  close
-                </Button>
-              </div>
-            </Modal>
+            <IdentifyRole
+              playerName={`Player ${count}`}
+              roleMessage={count === spyNumber ? '당신은 스파이입니다.' : `지정한 장소는 ${place}입니다`}
+            />
             <Button
               variant="outlined"
               onClick={() => {
