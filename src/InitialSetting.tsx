@@ -5,7 +5,6 @@ import React, { ReactElement } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { CategoryList } from './App';
-import randomIntFromInterval from './helper';
 import { getPlace } from './places';
 import {
   categorySelector,
@@ -15,6 +14,7 @@ import {
   spyNumberSelector,
   timeSelector,
 } from './selectors/InitialSetting';
+import { randomIntFromInterval } from './helper';
 
 const Copyright: React.FC = (): ReactElement => (
   <Typography variant="body2" color="textSecondary" align="center">

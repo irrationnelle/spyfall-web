@@ -1,5 +1,5 @@
 import { CategoryList } from './App';
-import randomIntFromInterval from './helper';
+import { randomIntFromInterval } from './helper';
 
 const basic = ['학교', '병원', '공항', '카페'];
 const country = ['일본', '노르웨이', '러시아', '프랑스'];

@@ -1,6 +1,4 @@
-import React, {
-  ReactElement, useState, useEffect, useRef,
-} from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   Box,
@@ -25,6 +23,7 @@ import {
   spyNumberSelector,
   timeSelector,
 } from './selectors/InitialSetting';
+import { createSequentialNumberArray, useInterval } from './helper';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -53,46 +52,16 @@ export enum CategoryList {
   STRANGE = 'strange'
 }
 
-const useInterval = (callback: ((...args: any[]) => any) | undefined, delay: number) => {
-  const savedCallback = useRef<((...args: any[]) => any) | undefined>();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  // eslint-disable-next-line consistent-return
-  useEffect(() => {
-    const tick = () => {
-      if (savedCallback.current) {
-        savedCallback.current();
-      }
-    };
-
-    if (delay !== null) {
-      const id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-};
-
-const createNumberArray = (size: number): number[] => {
-  let arr: number[] = [];
-  for (let i = 0; i < size; i += 1) {
-    arr = [...arr, i];
-  }
-  return arr;
-};
-
 const App:React.FC = (): ReactElement => {
   const classes = useStyles();
+
   const shouldStartGame = useRecoilValue(shouldStartGameSelector);
   const spyNumber = useRecoilValue(spyNumberSelector);
   const place = useRecoilValue(placeSelector);
   const time = useRecoilValue<number>(timeSelector);
   const countPlayer = useRecoilValue<number>(countPlayerSelector);
   const category = useRecoilValue<CategoryList>(categorySelector);
+
   const [count, setCount] = useState<number>(1);
   const [remainningTime, setRemainningTime] = useState<number>(time * 60);
   const [displayTime, setDisplayTime] = useState<string>('00:00');
@@ -138,7 +107,7 @@ const App:React.FC = (): ReactElement => {
   }, 1000);
 
   const places: string[] = getPlaces(category);
-  const players: number[] = createNumberArray(countPlayer).map((num) => num + 1);
+  const players: number[] = createSequentialNumberArray(countPlayer).map((num) => num + 1);
 
   useEffect(() => {
     if (!shouldShowResult) return;
