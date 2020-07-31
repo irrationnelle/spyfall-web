@@ -67,6 +67,32 @@ const App:React.FC = (): ReactElement => {
     return '플레이어 승리';
   };
 
+  const handleSkipTimer = () => {
+    setRemainningTime(0);
+    endGame(true);
+    setCount(1);
+  };
+
+  const handleNextPlayerToIdentify = () => {
+    setCount((number) => number + 1);
+    if (count === countPlayer) {
+      setRemainningTime(time * 60);
+      setDisplayTime(`${time}:00`);
+    }
+  };
+
+  const handleNextPlayerToAnswer = () => {
+    setCount((number) => number + 1);
+    if (count !== spyNumber) {
+      setAnswerFromPlayers((oldAnswers) => [...oldAnswers, answerFromPlayer]);
+      setAnswerFromPlayer(1);
+    }
+
+    if (count === countPlayer) {
+      setShouldShowResult(true);
+    }
+  };
+
   useInterval(() => {
     if (remainningTime === 0 && !shouldEndGame) {
       endGame(true);
@@ -122,13 +148,7 @@ const App:React.FC = (): ReactElement => {
             />
             <Button
               variant="outlined"
-              onClick={() => {
-                setCount((number) => number + 1);
-                if (count === countPlayer) {
-                  setRemainningTime(time * 60);
-                  setDisplayTime(`${time}:00`);
-                }
-              }}
+              onClick={handleNextPlayerToIdentify}
             >
               Next Player
             </Button>
@@ -150,11 +170,7 @@ const App:React.FC = (): ReactElement => {
         </Typography>
         <Button
           variant="outlined"
-          onClick={() => {
-            setRemainningTime(0);
-            endGame(true);
-            setCount(1);
-          }}
+          onClick={handleSkipTimer}
         >
           Skip
         </Button>
@@ -169,17 +185,7 @@ const App:React.FC = (): ReactElement => {
           <Answer isSpy={count === spyNumber} />
           <Button
             variant="outlined"
-            onClick={() => {
-              setCount((number) => number + 1);
-              if (count !== spyNumber) {
-                setAnswerFromPlayers((oldAnswers) => [...oldAnswers, answerFromPlayer]);
-                setAnswerFromPlayer(1);
-              }
-
-              if (count === countPlayer) {
-                setShouldShowResult(true);
-              }
-            }}
+            onClick={handleNextPlayerToAnswer}
           >
             Next Player
           </Button>
