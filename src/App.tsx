@@ -29,6 +29,8 @@ export enum CategoryList {
   STRANGE = 'strange'
 }
 
+const ONE_MINUTE = 60;
+
 const App:React.FC = (): ReactElement => {
   const shouldStartGame = useRecoilValue(shouldStartGameSelector);
   const spyNumber = useRecoilValue(spyNumberSelector);
@@ -37,7 +39,7 @@ const App:React.FC = (): ReactElement => {
   const countPlayer = useRecoilValue<number>(countPlayerSelector);
 
   const [count, setCount] = useState<number>(1);
-  const [remainingTime, setRemainingTime] = useState<number>(time * 60);
+  const [remainingTime, setRemainingTime] = useState<number>(time * ONE_MINUTE);
   const [displayTime, setDisplayTime] = useState<string>('00:00');
   const [shouldEndGame, endGame] = useState<boolean>(false);
 
@@ -76,7 +78,7 @@ const App:React.FC = (): ReactElement => {
   const handleNextPlayerToIdentify = () => {
     setCount((number) => number + 1);
     if (count === countPlayer) {
-      setRemainingTime(time * 60);
+      setRemainingTime(time * ONE_MINUTE);
       setDisplayTime(`${time}:00`);
     }
   };
@@ -102,13 +104,13 @@ const App:React.FC = (): ReactElement => {
 
     if (shouldStartTimer) {
       setRemainingTime(remainingTime - 1);
-      const currentMinute = Math.floor(remainingTime / 60);
-      const isOneMinutePassed = remainingTime % 60 === 0;
+      const currentMinute = Math.floor(remainingTime / ONE_MINUTE);
+      const isOneMinutePassed = remainingTime % ONE_MINUTE === 0;
       const min = isOneMinutePassed ? currentMinute - 1 : currentMinute;
 
       const diplaySecondsWithConditionalZero = (currentRemainningTime: number): string => {
-        const isSmallerThanTenSeconds = currentRemainningTime % 60 - 1 < 10;
-        return isSmallerThanTenSeconds ? `0${currentRemainningTime % 60 - 1}` : `${currentRemainningTime % 60 - 1}`;
+        const isSmallerThanTenSeconds = currentRemainningTime % ONE_MINUTE - 1 < 10;
+        return isSmallerThanTenSeconds ? `0${currentRemainningTime % ONE_MINUTE - 1}` : `${currentRemainningTime % ONE_MINUTE - 1}`;
       };
 
       const sec = isOneMinutePassed ? '59' : diplaySecondsWithConditionalZero(remainingTime);
