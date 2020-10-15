@@ -37,7 +37,7 @@ const App:React.FC = (): ReactElement => {
   const countPlayer = useRecoilValue<number>(countPlayerSelector);
 
   const [count, setCount] = useState<number>(1);
-  const [remainningTime, setRemainningTime] = useState<number>(time * 60);
+  const [remainingTime, setRemainingTime] = useState<number>(time * 60);
   const [displayTime, setDisplayTime] = useState<string>('00:00');
   const [shouldEndGame, endGame] = useState<boolean>(false);
 
@@ -68,7 +68,7 @@ const App:React.FC = (): ReactElement => {
   };
 
   const handleSkipTimer = () => {
-    setRemainningTime(0);
+    setRemainingTime(0);
     endGame(true);
     setCount(1);
   };
@@ -76,7 +76,7 @@ const App:React.FC = (): ReactElement => {
   const handleNextPlayerToIdentify = () => {
     setCount((number) => number + 1);
     if (count === countPlayer) {
-      setRemainningTime(time * 60);
+      setRemainingTime(time * 60);
       setDisplayTime(`${time}:00`);
     }
   };
@@ -94,16 +94,16 @@ const App:React.FC = (): ReactElement => {
   };
 
   useInterval(() => {
-    if (remainningTime === 0 && !shouldEndGame) {
+    if (remainingTime === 0 && !shouldEndGame) {
       endGame(true);
       setCount(1);
       return;
     }
 
     if (shouldStartTimer) {
-      setRemainningTime(remainningTime - 1);
-      const currentMinute = Math.floor(remainningTime / 60);
-      const isOneMinutePassed = remainningTime % 60 === 0;
+      setRemainingTime(remainingTime - 1);
+      const currentMinute = Math.floor(remainingTime / 60);
+      const isOneMinutePassed = remainingTime % 60 === 0;
       const min = isOneMinutePassed ? currentMinute - 1 : currentMinute;
 
       const diplaySecondsWithConditionalZero = (currentRemainningTime: number): string => {
@@ -111,7 +111,7 @@ const App:React.FC = (): ReactElement => {
         return isSmallerThanTenSeconds ? `0${currentRemainningTime % 60 - 1}` : `${currentRemainningTime % 60 - 1}`;
       };
 
-      const sec = isOneMinutePassed ? '59' : diplaySecondsWithConditionalZero(remainningTime);
+      const sec = isOneMinutePassed ? '59' : diplaySecondsWithConditionalZero(remainingTime);
 
       setDisplayTime(`${min}:${sec}`);
     }
