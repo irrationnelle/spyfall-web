@@ -108,12 +108,12 @@ const App:React.FC = (): ReactElement => {
       const isOneMinutePassed = remainingTime % ONE_MINUTE === 0;
       const min = isOneMinutePassed ? currentMinute - 1 : currentMinute;
 
-      const diplaySecondsWithConditionalZero = (currentRemainningTime: number): string => {
-        const isSmallerThanTenSeconds = currentRemainningTime % ONE_MINUTE - 1 < 10;
-        return isSmallerThanTenSeconds ? `0${currentRemainningTime % ONE_MINUTE - 1}` : `${currentRemainningTime % ONE_MINUTE - 1}`;
+      const displaySecondsWithConditionalZero = (currentRemainingTime: number): string => {
+        const isSmallerThanTenSeconds = currentRemainingTime % ONE_MINUTE - 1 < 10;
+        return isSmallerThanTenSeconds ? `0${currentRemainingTime % ONE_MINUTE - 1}` : `${currentRemainingTime % ONE_MINUTE - 1}`;
       };
 
-      const sec = isOneMinutePassed ? '59' : diplaySecondsWithConditionalZero(remainingTime);
+      const sec = isOneMinutePassed ? '59' : displaySecondsWithConditionalZero(remainingTime);
 
       setDisplayTime(`${min}:${sec}`);
     }
