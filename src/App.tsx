@@ -22,13 +22,6 @@ import {
 import { answerFromPlayerSelector, answerFromSpySelector } from './selectors/Answer';
 import { useInterval } from './helper';
 
-export enum CategoryList {
-  ALL = 'all',
-  BASIC = 'basic',
-  COUNTRY = 'country',
-  STRANGE = 'strange'
-}
-
 const ONE_MINUTE = 60;
 
 const App:React.FC = (): ReactElement => {

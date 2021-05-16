@@ -1,4 +1,4 @@
-import { CategoryList } from './App';
+import { CategoryList } from './atoms/InitialSetting';
 import { randomIntFromInterval } from './helper';
 
 const basic = ['학교', '병원', '공항', '카페'];

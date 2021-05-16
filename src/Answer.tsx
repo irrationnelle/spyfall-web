@@ -5,9 +5,9 @@ import {
 } from '@material-ui/core';
 import { answerFromSpySelector, answerFromPlayerSelector } from './selectors/Answer';
 import { categorySelector, countPlayerSelector } from './selectors/InitialSetting';
-import { CategoryList } from './App';
 import { getPlaces } from './places';
 import { createSequentialNumberArray } from './helper';
+import { CategoryList } from './atoms/InitialSetting';
 
 interface Props {
     isSpy: boolean

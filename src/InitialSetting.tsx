@@ -4,7 +4,6 @@ import {
 import React, { ReactElement } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { CategoryList } from './App';
 import { getPlace } from './places';
 import {
   categorySelector,
@@ -15,6 +14,7 @@ import {
   timeSelector,
 } from './selectors/InitialSetting';
 import { randomIntFromInterval } from './helper';
+import { CategoryList } from './atoms/InitialSetting';
 
 const Copyright: React.FC = (): ReactElement => (
   <Typography variant="body2" color="textSecondary" align="center">
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-const InitialSetting = () => {
+const InitialSetting = (): ReactElement => {
   const classes = useStyles();
   const [countPlayer, setCountPlayer] = useRecoilState<number>(countPlayerSelector);
   const [time, setTime] = useRecoilState<number>(timeSelector);

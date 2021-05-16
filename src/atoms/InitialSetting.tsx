@@ -1,24 +1,27 @@
 import { atom } from 'recoil';
 
-const DEFAULT_TIME_MINUTE = 5;
-const DEFAULT_COUNT_PLAYER = 4;
-enum CategoryList {
+export const DEFAULT_TIME_MINUTE = 5;
+export const DEFAULT_COUNT_PLAYER = 4;
+
+export enum CategoryList {
   ALL = 'all',
   BASIC = 'basic',
   COUNTRY = 'country',
   STRANGE = 'strange'
 }
 
+export const DEFAULT_SETTING = {
+  shouldStartGame: false,
+  countPlayer: DEFAULT_COUNT_PLAYER,
+  category: CategoryList.BASIC,
+  spyNumber: 0,
+  place: '허공',
+  time: DEFAULT_TIME_MINUTE,
+};
+
 const InitialSettingState = atom({
   key: 'initialSetting',
-  default: {
-    shouldStartGame: false,
-    countPlayer: DEFAULT_COUNT_PLAYER,
-    category: CategoryList.BASIC,
-    spyNumber: 0,
-    place: '허공',
-    time: DEFAULT_TIME_MINUTE,
-  },
+  default: DEFAULT_SETTING,
 });
 
 export default InitialSettingState;
