@@ -7,21 +7,10 @@ const answerFromPlayerSelector = selector<number>({
     const answer = get(Answer);
     return answer.answerFromPlayer;
   },
-  set: ({ set }, answerFromPlayer) => set(Answer, (answer) => {
-    const currentAnswerFromPlater = answerFromPlayer instanceof DefaultValue ? 0 : answerFromPlayer;
-
-    if (answer instanceof DefaultValue) {
-      return {
-        answerFromPlayer: currentAnswerFromPlater,
-        answerFromSpy: 'nowhere',
-      };
-    }
-
-    return {
-      ...answer,
-      answerFromPlayer: currentAnswerFromPlater,
-    };
-  }),
+  set: ({ set }, answerFromPlayer) => set(Answer, (answer) => ({
+    ...answer,
+    answerFromPlayer: answerFromPlayer instanceof DefaultValue ? 1 : answerFromPlayer,
+  })),
 });
 
 const answerFromSpySelector = selector<string>({
@@ -30,21 +19,10 @@ const answerFromSpySelector = selector<string>({
     const answer = get(Answer);
     return answer.answerFromSpy;
   },
-  set: ({ set }, answerFromSpy) => set(Answer, (answer) => {
-    const currentAnswerFromSpy = answerFromSpy instanceof DefaultValue ? '0' : answerFromSpy;
-
-    if (answer instanceof DefaultValue) {
-      return {
-        answerFromPlayer: -1,
-        answerFromSpy: currentAnswerFromSpy,
-      };
-    }
-
-    return {
-      ...answer,
-      answerFromSpy: currentAnswerFromSpy,
-    };
-  }),
+  set: ({ set }, answerFromSpy) => set(Answer, (answer) => ({
+    ...answer,
+    answerFromSpy: answerFromSpy instanceof DefaultValue ? '' : answerFromSpy,
+  })),
 });
 
 export {
