@@ -5,7 +5,7 @@ This is website to implement Spyfall game
 ## install
 
 ```shell
-npm i --legacy-peer-deps     
+npm install
 ```
 
 ## run
