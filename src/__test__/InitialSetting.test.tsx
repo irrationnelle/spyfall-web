@@ -1,40 +1,32 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import App from '../App';
 
 describe('설정 관련 화면(InitialSetting)에서는', () => {
-  let getByCurrentText: any;
-  let getByCurrentLabelText: any;
-  let getByCurrentTestId: any;
-  let queryByCurrentLabelText: any;
-  let queryByCurrentTestId: any;
+  const {
+    getByText, getByLabelText, queryByLabelText, queryByTestId,
+  } = screen;
+
   let inputCountPlayerElement: HTMLElement;
 
   beforeEach(() => {
-    const {
-      getByText, getByLabelText, getByTestId, queryByLabelText, queryByTestId,
-    } = render(
+    render(
       <RecoilRoot>
         <App />
       </RecoilRoot>,
     );
-    getByCurrentText = getByText;
-    getByCurrentLabelText = getByLabelText;
-    getByCurrentTestId = getByTestId;
-    queryByCurrentLabelText = queryByLabelText;
-    queryByCurrentTestId = queryByTestId;
     inputCountPlayerElement = getByLabelText('Player');
   });
 
   it('시간 입력이 나온다.', () => {
-    const linkElement = getByCurrentText('Time');
+    const linkElement = getByText('Time');
     expect(linkElement).toBeInTheDocument();
   });
 
   it('플레이어 숫자 입력이 나온다.', () => {
-    const linkElement = getByCurrentText('Player');
+    const linkElement = getByText('Player');
     expect(linkElement).toBeInTheDocument();
   });
 
@@ -43,9 +35,9 @@ describe('설정 관련 화면(InitialSetting)에서는', () => {
     fireEvent.change(inputCountPlayerElement, { target: { value: 2 } });
 
     // then
-    const errInputCountPlayerElement = queryByCurrentLabelText('Player');
+    const errInputCountPlayerElement = queryByLabelText('Player');
     expect(errInputCountPlayerElement).not.toBeInTheDocument();
-    const currentInputCountPlayerElement = getByCurrentLabelText('Error');
+    const currentInputCountPlayerElement = getByLabelText('Error');
     expect(currentInputCountPlayerElement).toBeInTheDocument();
   });
 
@@ -54,19 +46,19 @@ describe('설정 관련 화면(InitialSetting)에서는', () => {
     fireEvent.change(inputCountPlayerElement, { target: { value: 9 } });
 
     // then
-    const errInputCountPlayerElement = queryByCurrentLabelText('Player');
+    const errInputCountPlayerElement = queryByLabelText('Player');
     expect(errInputCountPlayerElement).not.toBeInTheDocument();
-    const currentInputCountPlayerElement = getByCurrentLabelText('Error');
+    const currentInputCountPlayerElement = getByLabelText('Error');
     expect(currentInputCountPlayerElement).toBeInTheDocument();
   });
 
   it('게임을 시작하면 설정 화면에서 벗어난다.', () => {
     // given
-    const gameSettingBox = queryByCurrentTestId('game-setting-box');
+    const gameSettingBox = queryByTestId('game-setting-box');
     expect(gameSettingBox).toBeInTheDocument();
 
     // when
-    fireEvent.click(getByCurrentText(/game start!/i));
+    fireEvent.click(getByText(/game start!/i));
 
     // then
     expect(gameSettingBox).not.toBeInTheDocument();
